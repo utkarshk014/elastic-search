@@ -1,0 +1,26 @@
+services:
+  elasticsearch:
+    image: elasticsearch:8.11.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+  app:
+    build: .
+    container_name: search_app
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTIC_HOST=http://elasticsearch:9200
+    volumes:
+      - .:/app
+    working_dir: /app
+
+volumes:
+  elasticsearch_data:
